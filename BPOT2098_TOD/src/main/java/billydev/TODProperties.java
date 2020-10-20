@@ -1,19 +1,19 @@
 package billydev;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 import java.util.List;
 
-@PropertySource(value = "classpath:application.properties", encoding = "UTF-8")
+@PropertySource(value = "classpath:custom.properties", encoding = "UTF-8")
 @Configuration
 @ConfigurationProperties(prefix = "tod")
 public class TODProperties {
-    /*
-    * default rootlocation is Backup, it could be BackupTest etc.
-    **/
-    String backupSourceRootLocation;
+
+    @Value("${tod.testcn}")
+    String testCn;
     /*
     * manually input in source folders need to be backup
     * */
@@ -29,13 +29,7 @@ public class TODProperties {
     *   as USB disk got random driver name when it is attached to computer*/
     List<String> attachedUsbDiskCheckList;
 
-    public String getBackupSourceRootLocation() {
-        return backupSourceRootLocation;
-    }
 
-    public void setBackupSourceRootLocation(String backupSourceRootLocation) {
-        this.backupSourceRootLocation = backupSourceRootLocation;
-    }
 
     public List<String> getBackupSourceFolders() {
         return backupSourceFolders;

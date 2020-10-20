@@ -71,12 +71,11 @@ public class Tools {
 	
 	
 	public static boolean sourceNeedDisplayInConsoleDuringCopy(Path path){
-		String pattern="glob:*.{java,uxf,sql,sh,css,html,htm,js,doc, docx,xls, xlsx,bat,txt}";
+		String pattern="glob:*.{java,uxf,sql,sh,css,html,htm,js,doc, docx,xls,xlsx,bat,txt}";
 		PathMatcher matcher = FileSystems.getDefault().getPathMatcher(pattern);		
 		if(matcher.matches(path.getFileName())){
 			return true; 
 		}
-
 		return false;
 	}
 
