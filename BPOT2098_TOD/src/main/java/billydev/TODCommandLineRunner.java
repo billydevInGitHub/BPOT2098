@@ -43,7 +43,11 @@ public class TODCommandLineRunner implements CommandLineRunner {
         if (backupTargetUSBDriverName.equals("")) {
             throw new RuntimeException("No USD disk attached!!");
         }
-        ;
+
+        if (!Files.exists(Paths.get("D:\\" + SOURCE_USBDISK_MARK_FOLDER4))) {
+            throw new RuntimeException("Source Drive D does not have mark folder!");
+        }
+
         String destinationFolder = backupTargetUSBDriverName + ":\\" + todProperties.getBackupDestinationFolder();
 
         //TODO: log stuff         logLocation=resBundle.getString("PM1001_logfolder");

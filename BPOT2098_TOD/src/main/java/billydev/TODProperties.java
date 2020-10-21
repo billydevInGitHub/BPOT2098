@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @PropertySource(value = "classpath:custom.properties", encoding = "UTF-8")
@@ -12,8 +13,8 @@ import java.util.List;
 @ConfigurationProperties(prefix = "tod")
 public class TODProperties {
 
-    @Value("${tod.testcn}")
-    String testCn;
+    @Value("${tod.backupSourceFoldersUTF8}")
+    String backupSourceFoldersUTF8;
     /*
     * manually input in source folders need to be backup
     * */
@@ -32,7 +33,7 @@ public class TODProperties {
 
 
     public List<String> getBackupSourceFolders() {
-        return backupSourceFolders;
+        return Arrays.asList(backupSourceFoldersUTF8.split(","));
     }
 
     public void setBackupSourceFolders(List<String> backupSourceFolders) {
