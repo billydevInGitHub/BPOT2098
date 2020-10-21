@@ -3,10 +3,7 @@ package billydev;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -44,7 +41,11 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 				Files.copy(path, newDestinationPath, StandardCopyOption.REPLACE_EXISTING);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn(e.getMessage());
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			logger.debug(sw.toString());
 		}
 		return FileVisitResult.CONTINUE;
 	}
@@ -82,7 +83,11 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 			logger.debug(message);
 			Files.copy(path, newDestinationPath, StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn(e.getMessage());
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			logger.debug(sw.toString());
 		}
 		logger.debug("Directory visited: "+path);
 		return FileVisitResult.CONTINUE;

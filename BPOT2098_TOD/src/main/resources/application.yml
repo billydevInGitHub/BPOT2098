@@ -5,3 +5,10 @@
    attachedUsbDiskCheckList[3]: H
    attachedUsbDiskCheckList[4]: I
    backupDestinationFolder: Backup\PM1000
+debug: true
+logging:
+   level:
+      billydev:
+         Tools: INFO
+         MyFileCopyVisitor: DEBUG
+
