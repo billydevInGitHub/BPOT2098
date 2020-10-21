@@ -1,5 +1,8 @@
 package billydev;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,34 +21,26 @@ import java.util.Date;
 
 public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 
-	
+	private static Logger logger = LoggerFactory.getLogger(MyFileCopyVisitor.class);
 
 	private Path source, destination;
 
 	public MyFileCopyVisitor(Path s, Path d) {
 		source = s;
 		destination = d;
-		
 	}
 
 	@Override
 	public FileVisitResult visitFile(Path path, BasicFileAttributes fileAttributes) {
+
 		Path newDestinationPath = destination.resolve(source.relativize(path));
-//		System.out.println("path is: "+path
-//				+"  destination.resolve(source.relativize(path) is:  "
-//				+newDestinationPath);
-		System.out.println("=========================");
 		try {
 			if(Tools.sourceIsNewer(path, newDestinationPath)
 					&&Tools.sourceFileNotTmpFile(path)
 					&&Tools.sourceFileNotClassFile(path)
 					){
-				String message="   ...Copying from "+path +" \n        ...to "+newDestinationPath;
-				//only display to console important files
-				if(Tools.sourceNeedDisplayInConsoleDuringCopy(path)){
-				    System.out.println(message);
-				}
-//				TODLogger.getPrintWriter().println(message);
+				String message="Copying from "+path +"to "+newDestinationPath;
+				logger.debug(message);
 				Files.copy(path, newDestinationPath, StandardCopyOption.REPLACE_EXISTING);
 			}
 		} catch (IOException e) {
@@ -61,39 +56,35 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 		Path newDestinationPath = destination.resolve(source.relativize(path));
 
 		if(Tools.sourceDirIsCVS(path)){
+			logger.debug("ignoring CVS folder: "+path);
 			return FileVisitResult.SKIP_SUBTREE;
 		}
-
 		if(Tools.sourceDirIsNodeModule(path)){
+			logger.debug("ignoring Node Module folder: " + path);
 			return FileVisitResult.SKIP_SUBTREE;  
 		}
 
 		if(Tools.sourceDirIsMetaData(path)){
-			System.out.println("ignoring metadata folder");
+			logger.debug("ignoring metadata folder: "+path);
 			return FileVisitResult.SKIP_SUBTREE;  
 		}
 		if(Tools.sourceDirIsMetaDataOnPM1000(path)){
-			System.out.println("ignoring metadata folder");
+			logger.debug("ignoring metadata folder: "+path);
 			return FileVisitResult.SKIP_SUBTREE;  
 		}
 		//we do not need to copy the directory if it exists
 		if(Files.exists(newDestinationPath)){
 			return FileVisitResult.CONTINUE;
 		}
-		
 		try {
-			String message="   ...check source folder:  "+path
-					+" \n        ...create new folder: "+newDestinationPath;
-			//only display to console important files
-			if(Tools.sourceNeedDisplayInConsoleDuringCopy(path)){
-			    System.out.println(message);
-			}
-      //todo:TODLogger.getPrintWriter().println(message);
+			String message="check source folder:  "+path
+					+" create new folder: "+newDestinationPath;
+			logger.debug(message);
 			Files.copy(path, newDestinationPath, StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Directory visited "+path);
+		logger.debug("Directory visited: "+path);
 		return FileVisitResult.CONTINUE;
 	}
 }

@@ -13,26 +13,26 @@ import java.util.List;
 @ConfigurationProperties(prefix = "tod")
 public class TODProperties {
 
+    /**
+     * The folder names which could have UTF8 characters
+     */
     @Value("${tod.backupSourceFoldersUTF8}")
     String backupSourceFoldersUTF8;
-    /*
-    * manually input in source folders need to be backup
-    * */
+
+    /**
+     * This is actually not used until application.properties support
+     * UTF8 loading
+     */
     List<String> backupSourceFolders;
-    /*
-    * default backupDestinationFolder is:
-    * example: D:\Backup\PM1000 PM1000 is physical machine name
-    *          so Backup folder  can have more than one machine backup content
-    * */
+
     String backupDestinationFolder;
-    /*
-    * examples of attachedUsbDiskCheckList are : D, E, F, G ...
-    *   as USB disk got random driver name when it is attached to computer*/
+
     List<String> attachedUsbDiskCheckList;
 
-
-
     public List<String> getBackupSourceFolders() {
+        /**
+         * This is temp work around when application.properties not support UTF8
+         */
         return Arrays.asList(backupSourceFoldersUTF8.split(","));
     }
 
