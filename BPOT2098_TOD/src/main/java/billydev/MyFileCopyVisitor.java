@@ -37,7 +37,7 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 					&&Tools.sourceFileNotClassFile(path)
 					){
 				String message="Copying from "+path +"to "+newDestinationPath;
-				logger.debug(message);
+				logger.info(message);
 				Files.copy(path, newDestinationPath, StandardCopyOption.REPLACE_EXISTING);
 			}
 		} catch (IOException e) {
