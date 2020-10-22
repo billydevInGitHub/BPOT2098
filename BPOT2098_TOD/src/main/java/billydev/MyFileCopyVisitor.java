@@ -36,9 +36,9 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 					&&Tools.sourceFileNotTmpFile(path)
 					&&Tools.sourceFileNotClassFile(path)
 					){
-				String message="Copying from "+path +"to "+newDestinationPath;
-				logger.info(message);
 				Files.copy(path, newDestinationPath, StandardCopyOption.REPLACE_EXISTING);
+				String message="Copy from "+path +"to "+newDestinationPath;
+				logger.info(message);
 			}
 		} catch (IOException e) {
 			logger.warn(e.getMessage());
@@ -78,10 +78,10 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 			return FileVisitResult.CONTINUE;
 		}
 		try {
-			String message="check source folder:  "+path
-					+" create new folder: "+newDestinationPath;
-			logger.debug(message);
 			Files.copy(path, newDestinationPath, StandardCopyOption.REPLACE_EXISTING);
+			String message="check source folder:  "+path
+					+" created new folder: "+newDestinationPath;
+			logger.info(message);
 		} catch (IOException e) {
 			logger.warn(e.getMessage());
 			StringWriter sw = new StringWriter();
