@@ -1,3 +1,8 @@
+
+/*
+ * Copyright (c) 2020.  Billydev
+ */
+
 package billydev;
 
 import org.slf4j.Logger;
@@ -16,6 +21,13 @@ import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * A class that go through the source path tree and copy directory or files
+ * when needed.
+ *
+ * @author Billy Li
+ * Since 1.0
+ */
 public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 
 	private static Logger logger = LoggerFactory.getLogger(MyFileCopyVisitor.class);
@@ -27,6 +39,12 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 		destination = d;
 	}
 
+	/**
+	 * Copy the file when the source version is newer than target version
+	 * @param path the source file path under visiting
+	 * @param fileAttributes  the source file attributes
+	 * @return an instance of FileVisitResult enum.
+	 */
 	@Override
 	public FileVisitResult visitFile(Path path, BasicFileAttributes fileAttributes) {
 
@@ -37,7 +55,7 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 					&&Tools.sourceFileNotClassFile(path)
 					){
 				Files.copy(path, newDestinationPath, StandardCopyOption.REPLACE_EXISTING);
-				String message="Copy from "+path +"to "+newDestinationPath;
+				String message="Copy from "+path +" to "+newDestinationPath;
 				logger.info(message);
 			}
 		} catch (IOException e) {
@@ -51,6 +69,13 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 	}
 
 
+	/**
+	 * Skip some folders which are not imporant to save space.
+	 * Create a new folder when needed.
+	 * @param path  source folder path
+	 * @param fileAttributes  source folder attributes
+	 * @return  FileVisitResult Enum
+	 */
 
 	@Override
 	public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes fileAttributes) {

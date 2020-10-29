@@ -15,6 +15,19 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Class that can be used to backup from source folders to target folder.
+ * By default the class will do the following steps to do the backup:
+ *
+ * <ul>
+ * <li>Inject to Spring Boot as a Component</li>
+ * <li>Use {@link MyFileCopyVisitor} instance when visitor the source path tree
+ * using {@link  Files} walkFileTree </li>
+ * </ul>
+ * @author Billy Li
+ * @since 1.0
+ */
+
 @Component
 public class TODCommandLineRunner implements CommandLineRunner {
     public static final String TARGET_USBDISK_MARK_FOLDER1 = "WD Apps for Windows";
@@ -23,7 +36,7 @@ public class TODCommandLineRunner implements CommandLineRunner {
     public static final String SOURCE_USBDISK_MARK_FOLDER4 = "BackupSource";
 
     @Autowired
-    TODProperties todProperties;
+    TodProperties todProperties;
 
     private static  Logger logger = LoggerFactory.getLogger(TODCommandLineRunner.class);
 
