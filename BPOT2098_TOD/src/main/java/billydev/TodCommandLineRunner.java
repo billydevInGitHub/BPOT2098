@@ -29,7 +29,7 @@ import java.util.Date;
  */
 
 @Component
-public class TODCommandLineRunner implements CommandLineRunner {
+public class TodCommandLineRunner implements CommandLineRunner {
     public static final String TARGET_USBDISK_MARK_FOLDER1 = "WD Apps for Windows";
     public static final String TARGET_USBDISK_MARK_FOLDER2 = "User Manuals";
     public static final String TARGET_USBDISK_MARK_FOLDER3 = "Backup";
@@ -38,7 +38,7 @@ public class TODCommandLineRunner implements CommandLineRunner {
     @Autowired
     TodProperties todProperties;
 
-    private static  Logger logger = LoggerFactory.getLogger(TODCommandLineRunner.class);
+    private static  Logger logger = LoggerFactory.getLogger(TodCommandLineRunner.class);
 
     @Override
     public void run(String... args) throws Exception {

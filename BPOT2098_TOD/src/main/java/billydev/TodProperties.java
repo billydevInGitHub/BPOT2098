@@ -15,6 +15,8 @@ import java.util.List;
 /**
  * {@link ConfigurationProperties} for Tod application
  * Use @PropertySource for properties need unicode support
+ * @author Billy Li
+ * @since  1.0
  */
 
 @PropertySource(value = "classpath:custom.properties", encoding = "UTF-8")
@@ -45,10 +47,7 @@ public class TodProperties {
     List<String> attachedUsbDiskCheckList;
 
     public List<String> getBackupSourceFolders() {
-        /*
-          This is work around when application.properties not support UTF8
-         */
-        //
+        //This is work around when application.properties not support UTF8
         return Arrays.asList(backupSourceFoldersUTF8.split(","));
     }
 

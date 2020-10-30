@@ -34,6 +34,11 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 
 	private Path source, destination;
 
+	/**
+	 * Constructor
+	 * @param s source path
+	 * @param d destination path
+	 */
 	public MyFileCopyVisitor(Path s, Path d) {
 		source = s;
 		destination = d;
@@ -50,7 +55,7 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 
 		Path newDestinationPath = destination.resolve(source.relativize(path));
 		try {
-			if(Tools.sourceIsNewer(path, newDestinationPath)
+			if (Tools.sourceIsNewer(path, newDestinationPath)
 					&&Tools.sourceFileNotTmpFile(path)
 					&&Tools.sourceFileNotClassFile(path)
 					){
@@ -81,31 +86,31 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 	public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes fileAttributes) {
 		Path newDestinationPath = destination.resolve(source.relativize(path));
 
-		if(Tools.sourceDirIsCVS(path)){
+		if (Tools.sourceDirIsCVS(path)){
 			logger.debug("ignoring CVS folder: "+path);
 			return FileVisitResult.SKIP_SUBTREE;
 		}
-		if(Tools.sourceDirIsNodeModule(path)){
+		if (Tools.sourceDirIsNodeModule(path)){
 			logger.debug("ignoring Node Module folder: " + path);
 			return FileVisitResult.SKIP_SUBTREE;  
 		}
 
-		if(Tools.sourceDirIsMetaData(path)){
-			logger.debug("ignoring metadata folder: "+path);
+		if (Tools.sourceDirIsMetaData(path)){
+			logger.debug("ignoring metadata folder: " + path);
 			return FileVisitResult.SKIP_SUBTREE;  
 		}
-		if(Tools.sourceDirIsMetaDataOnPM1000(path)){
-			logger.debug("ignoring metadata folder: "+path);
+		if (Tools.sourceDirIsMetaDataOnPM1000(path)){
+			logger.debug("ignoring metadata folder: " + path);
 			return FileVisitResult.SKIP_SUBTREE;  
 		}
 		//we do not need to copy the directory if it exists
-		if(Files.exists(newDestinationPath)){
+		if (Files.exists(newDestinationPath)){
 			return FileVisitResult.CONTINUE;
 		}
 		try {
 			Files.copy(path, newDestinationPath, StandardCopyOption.REPLACE_EXISTING);
-			String message="check source folder:  "+path
-					+" created new folder: "+newDestinationPath;
+			String message="check source folder:  " + path
+					+ " created new folder: " + newDestinationPath;
 			logger.info(message);
 		} catch (IOException e) {
 			logger.warn(e.getMessage());

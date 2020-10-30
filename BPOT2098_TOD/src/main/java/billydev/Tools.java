@@ -121,19 +121,15 @@ public class Tools {
 		PathMatcher matcher = FileSystems.getDefault().getPathMatcher(pattern);
 		
 		if(matcher.matches(path)){
-			/**
-			 * Need to exclude DBConnectionMetaData
-			 */
+			 // Need to exclude DBConnectionMetaData
 			String patternSpecial1="glob:**DBConnectionMetaData";
 			PathMatcher matcherSpecial1 = FileSystems.getDefault().getPathMatcher(patternSpecial1);
-			/**
-			 * if it is this special case, we just say this is not a Meta Data folder we need to ignore
-			 */
+			 // if it is this special case, we just say this is not a Meta Data folder we need to ignore
 			if(matcherSpecial1.matches(path)){
 				logger.debug("Found a special folder and make it not a meta folder: " + path);
 				return false; 
 			}
-			System.out.println("    Found a metadata folder, will be ignored           Path is:  "+path);
+			logger.debug("Found a metadata folder, will be ignored           Path is:  "+path);
 			return true; 
 		}
 		return false;
@@ -164,12 +160,12 @@ public class Tools {
 		String pattern="glob:**eclipseworkspaceE16**metadata";
 		PathMatcher matcher = FileSystems.getDefault().getPathMatcher(pattern);
 		
-		if(matcher.matches(path)){
+		if (matcher.matches(path)){
 			 //need to exclude DBConnectionMetaData
 			String patternSpecial1="glob:**DBConnectionMetaData";
 			PathMatcher matcherSpecial1 = FileSystems.getDefault().getPathMatcher(patternSpecial1);
 			 //if it is this special case, log and ignore
-			if(matcherSpecial1.matches(path)){
+			if (matcherSpecial1.matches(path)){
 				logger.debug(" Not a meta folder path:"+path);
 				return false; 
 			}
@@ -177,6 +173,4 @@ public class Tools {
 		}
 		return false;
 	}
-
-
 }
