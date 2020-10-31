@@ -1,5 +1,7 @@
 package billydev;
 
+import billydev.customize.SourceDiskDriveSpecificInformationConstants;
+import billydev.customize.TargetDiskDriveSpecificFolderNameConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +32,7 @@ import java.util.Date;
 
 @Component
 public class TodCommandLineRunner implements CommandLineRunner {
-    public static final String TARGET_USBDISK_MARK_FOLDER1 = "WD Apps for Windows";
-    public static final String TARGET_USBDISK_MARK_FOLDER2 = "User Manuals";
-    public static final String TARGET_USBDISK_MARK_FOLDER3 = "Backup";
-    public static final String SOURCE_USBDISK_MARK_FOLDER4 = "BackupSource";
+
 
     @Autowired
     TodProperties todProperties;
@@ -47,27 +46,30 @@ public class TodCommandLineRunner implements CommandLineRunner {
         String pattern = "yy-MM-dd HH-mm-ss";
         SimpleDateFormat formatter = new SimpleDateFormat(pattern);
         try {
-             //Part 1:  Prepare the parameters to run backup
+            // Part 1:  Prepare the parameters to run backup.
             String backupTargetUSBDriverName = "";
             for (String attachedUsbDiskName : todProperties.getAttachedUsbDiskCheckList()) {
-                //check if specific folder exists in targetFolder
-                if (confirmTargetFolder(attachedUsbDiskName)) {
+                // check if specific folder exists in target drive
+                // usually there is only one target drive attached
+                // the first drive has all marker folders will be target drive
+                if (confirmTargetFolders(attachedUsbDiskName)) {
                     backupTargetUSBDriverName = attachedUsbDiskName;
-                    logger.info("Attached backup target usb driver is:" + backupTargetUSBDriverName);
+                    logger.info("Attached backup target usb driver is decided: " + backupTargetUSBDriverName);
                     break;
                 }
             }
             if (backupTargetUSBDriverName.equals("")) {
-                throw new RuntimeException("No USD disk attached!!");
+                throw new RuntimeException("No target USD disk attached!!");
             }
-            if (!Files.exists(Paths.get("D:\\" + SOURCE_USBDISK_MARK_FOLDER4))) {
-                throw new RuntimeException("Source Drive D does not have mark folder!");
+            if (!Files.exists(Paths.get(SourceDiskDriveSpecificInformationConstants.SOURCE_DISK_DRIVE_NAME
+                    + SourceDiskDriveSpecificInformationConstants.SOURCE_DISK_MARK_FOLDER1))) {
+                throw new RuntimeException("Source Disk drive not found or it does not have marker folder!");
             }
             String destinationFolder = backupTargetUSBDriverName + ":\\" + todProperties.getBackupDestinationFolder();
-            String backupMessage = "Backup Begin Time: " + formatter.format(new Date());
+            String backupMessage = "Backup begin time: " + formatter.format(new Date());
             logger.info(backupMessage);
 
-            //Part 2: do the backup
+            // Part 2: do the backup.
             Path pathSource = null;
             Path pathDestination = null;
             for (String backupSourceFolder : todProperties.getBackupSourceFolders()) {
@@ -75,11 +77,11 @@ public class TodCommandLineRunner implements CommandLineRunner {
                 pathSource = Paths.get(backupSourceFolder);
                 pathDestination = Paths.get(destinationFolder + "\\" + pathSource.getFileName());
                 logger.info("Back up destination folder: " + pathDestination.toString());
-                backup(pathSource, pathDestination, "logLocationHARDCODED");
+                backup(pathSource, pathDestination);
             }
             long estimatedTime = System.currentTimeMillis() - startTime;
-            String message="Files copied successfully  Time elapse: "+estimatedTime+" milliseconds  End time: "
-                    +formatter.format(new Date());
+            String message="Files copied successfully.  Time elapsed: " + estimatedTime + " milliseconds  End time: "
+                    + formatter.format(new Date());
             logger.info(message);
         } catch (Throwable throwable) {
             logger.error(throwable.getMessage());
@@ -91,14 +93,18 @@ public class TodCommandLineRunner implements CommandLineRunner {
         }
     }
 
-    private boolean confirmTargetFolder(String usbFolder) {
-        return Files.exists(Paths.get(usbFolder + ":\\" + TARGET_USBDISK_MARK_FOLDER1))
-                && Files.exists(Paths.get(usbFolder + ":\\" + TARGET_USBDISK_MARK_FOLDER2))
-                && Files.exists(Paths.get(usbFolder + ":\\" + TARGET_USBDISK_MARK_FOLDER3))
-                && (!Files.exists(Paths.get(usbFolder + ":\\" + SOURCE_USBDISK_MARK_FOLDER4)));
+    private boolean confirmTargetFolders(String usbFolder) {
+        return Files.exists(Paths.get(usbFolder + ":\\"
+                    + TargetDiskDriveSpecificFolderNameConstants.TARGET_USBDISK_MARK_FOLDER1))
+                && Files.exists(Paths.get(usbFolder
+                    + ":\\" + TargetDiskDriveSpecificFolderNameConstants.TARGET_USBDISK_MARK_FOLDER2))
+                && Files.exists(Paths.get(usbFolder + ":\\"
+                    + TargetDiskDriveSpecificFolderNameConstants.TARGET_USBDISK_MARK_FOLDER3))
+                && (!Files.exists(Paths.get(usbFolder + ":\\"
+                    + SourceDiskDriveSpecificInformationConstants.SOURCE_DISK_MARK_FOLDER1)));
     }
 
-    private void backup(Path pathSource, Path pathDestination, String logLocation) {
+    private void backup(Path pathSource, Path pathDestination) {
         try {
             Files.walkFileTree(pathSource, new MyFileCopyVisitor(pathSource, pathDestination));
         } catch (IOException e) {

@@ -5,21 +5,17 @@
 
 package billydev;
 
+import billydev.customize.SourceFileAndFolderPathChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * A class that go through the source path tree and copy directory or files
@@ -56,8 +52,8 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 		Path newDestinationPath = destination.resolve(source.relativize(path));
 		try {
 			if (Tools.sourceIsNewer(path, newDestinationPath)
-					&&Tools.sourceFileNotTmpFile(path)
-					&&Tools.sourceFileNotClassFile(path)
+					&& SourceFileAndFolderPathChecker.sourceFileNotTmpFile(path)
+					&& SourceFileAndFolderPathChecker.sourceFileNotClassFile(path)
 					){
 				Files.copy(path, newDestinationPath, StandardCopyOption.REPLACE_EXISTING);
 				String message="Copy from "+path +" to "+newDestinationPath;
@@ -75,8 +71,7 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 
 
 	/**
-	 * Skip some folders which are not imporant to save space.
-	 * Create a new folder when needed.
+	 * Create a new folder when needed.Skip not important folders.
 	 * @param path  source folder path
 	 * @param fileAttributes  source folder attributes
 	 * @return  FileVisitResult Enum
@@ -86,26 +81,9 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 	public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes fileAttributes) {
 		Path newDestinationPath = destination.resolve(source.relativize(path));
 
-		if (Tools.sourceDirIsCVS(path)){
-			logger.debug("ignoring CVS folder: "+path);
-			return FileVisitResult.SKIP_SUBTREE;
-		}
-		if (Tools.sourceDirIsNodeModule(path)){
-			logger.debug("ignoring Node Module folder: " + path);
-			return FileVisitResult.SKIP_SUBTREE;  
-		}
-
-		if (Tools.sourceDirIsMetaData(path)){
-			logger.debug("ignoring metadata folder: " + path);
-			return FileVisitResult.SKIP_SUBTREE;  
-		}
-		if (Tools.sourceDirIsMetaDataOnPM1000(path)){
-			logger.debug("ignoring metadata folder: " + path);
-			return FileVisitResult.SKIP_SUBTREE;  
-		}
-		//we do not need to copy the directory if it exists
-		if (Files.exists(newDestinationPath)){
-			return FileVisitResult.CONTINUE;
+		FileVisitResult checkResult = SourceFileAndFolderPathChecker.checkSourceFolders(path, newDestinationPath);
+		if (checkResult != null) {
+			return checkResult;
 		}
 		try {
 			Files.copy(path, newDestinationPath, StandardCopyOption.REPLACE_EXISTING);
@@ -122,4 +100,6 @@ public class MyFileCopyVisitor extends SimpleFileVisitor<Path> {
 		logger.debug("Directory visited: "+path);
 		return FileVisitResult.CONTINUE;
 	}
+
+
 }

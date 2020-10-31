@@ -36,12 +36,12 @@ public class TodProperties {
     List<String> backupSourceFolders;
 
     /**
-     * Target parent folder of backup.
+     * Target parent folder. Usually this is not named with UTF8 characters.
      */
     String backupDestinationFolder;
 
     /**
-     * Usb disk driver name check list as the target backup usb disk might
+     * Usb disk driver name check list as the target usb disk might
      * randomly mapped to a driver name like E, F, G etc.
      */
     List<String> attachedUsbDiskCheckList;
